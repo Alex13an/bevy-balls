@@ -80,7 +80,7 @@ fn move_balls(
         }
 
         let (ball_x, ball_y) = get_ball_position(ball.angle_deg);
-        let mov_vec = Vec3::new(ball_x - transform.translation.x, ball_y - transform.translation.y, 0.0);
-        transform.translation += mov_vec;
+        transform.translation.x = ball_x;
+        transform.translation.y = ball_y;
     }
 }
