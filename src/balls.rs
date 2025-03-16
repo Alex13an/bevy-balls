@@ -13,6 +13,7 @@ const BALL_SIZE: f32 = 10.0;
 const BALLS_CIRCLE_RADIUS: f32 = 80.0;
 const BALLS_CENTER_POSITION_X: f32 = 0.0;
 const BALLS_CENTER_POSITION_Y: f32 = -300.0;
+const BALLS_ANGULAR_SPEED: f32 = 300.0;
 
 #[derive(Component)]
 pub struct Ball {
@@ -67,18 +68,19 @@ fn draw_balls_radius(mut gizmos: Gizmos) {
 fn move_balls(
     mut balls_query: Query<(&mut Transform, &mut Ball)>,
     key_input: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
 ) {
     for (mut transform, mut ball) in balls_query.iter_mut() {
         if key_input.pressed(KeyCode::ArrowRight) {
-            ball.angle_deg += 1.0;
-        }
-
-        if key_input.pressed(KeyCode::ArrowLeft) {
-            ball.angle_deg -= 1.0;
+            ball.angle_deg += BALLS_ANGULAR_SPEED * time.delta_secs();
+        } else if key_input.pressed(KeyCode::ArrowLeft) {
+            ball.angle_deg -= BALLS_ANGULAR_SPEED * time.delta_secs();
+        } else {
+            return
         }
 
         let (ball_x, ball_y) = get_ball_position(ball.angle_deg);
-        transform.translation.x = ball_x;
-        transform.translation.y = ball_y;
+        let mov_vec = Vec3::new(ball_x - transform.translation.x, ball_y - transform.translation.y, 0.0);
+        transform.translation += mov_vec;
     }
 }
